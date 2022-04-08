@@ -1,15 +1,26 @@
+const { Stats } = require('fs-extra')
 const readdir = require('recursive-readdir')
+
+const Settings = () => {
+  return {
+    path: './',
+    /**
+     * @type {string[]}
+     */
+    exclude: [], // globs
+    files: true,
+    directories: true,
+    newerThan: 0,
+    logging: true
+  }
+}
 
 class Builder {
   constructor () {
-    this.settings = {
-      path: './',
-      exclude: [],//globs
-      files: true,
-      directories: true,
-      newerThan: 0,
-      logging: true
-    }
+    /**
+     * @type {ReturnType<Settings>}
+     */
+    this.settings = Settings()
   }
 
   /**
@@ -24,7 +35,7 @@ class Builder {
 
   /**
    * Exclude directories
-   * @param {Array} dirList
+   * @param {string[]} dirList
    * @return {Builder}
    */
   exclude (dirList = []) {
@@ -34,21 +45,21 @@ class Builder {
 
   /**
    * Sets whether to include files
-   * @param {Boolean} bool
+   * @param {boolean} [bool]
    * @return {Builder}
    */
   files (bool = false) {
-    this.files = bool
+    this.settings.files = bool
     return this
   }
 
   /**
    * Sets whether to include directories
-   * @param {Boolean} bool
+   * @param {boolean} [bool]
    * @return {Builder}
    */
   directories (bool = false) {
-    this.directories = bool
+    this.settings.directories = bool
     return this
   }
 
@@ -65,7 +76,7 @@ class Builder {
 /**
    * Sets whether to output logs.
    * If not set, uses true.
-   * @param {Boolean} bool
+   * @param {boolean} [bool]
    * @return {Builder}
    */
   logging (bool = false) {
@@ -75,7 +86,7 @@ class Builder {
 
   /**
    * Executes the scan
-   * @return {Promise} Resolves list of files
+   * @return {Promise<string[]>} Resolves list of files
    */
   exec () {
     if(this.settings.logging){
@@ -83,13 +94,16 @@ class Builder {
           'settings': this.settings
         })
     }
-    return readdir(this.settings.path, [...this.settings.exclude, this._oldExcluder.bind(this)])
+    // https://github.com/jergason/recursive-readdir
+    // @ts-ignore
+    const promise = readdir(this.settings.path, [...this.settings.exclude, this._oldExcluder.bind(this)])
+    return promise
   }
 
   /**
   * @see https://github.com/jergason/recursive-readdir/issues/61
   * @param {File} file
-  * @param {object} stats
+  * @param {Stats} stats
   * @return {boolean}
    */
   _oldExcluder (file, stats) {

@@ -4,7 +4,7 @@
   "description": "Simple Node js library for getting recently modified files.\r Main goal is for having a way of getting modified files that need to be back-upped.\r By default, gets only folders, but can set to get only files and both too.",
   "main": "index.js",
   "scripts": {
-    "test": "nyc --reporter=html mocha ./test/*.js"
+    "test": "mocha ./test/*.js"
   },
   "author": "Damien Golding",
   "license": "MIT",

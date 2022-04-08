@@ -15,33 +15,51 @@ const CHANGED_FILE_PATHS = [
 describe('NodeRecentlyModified', () => {
   describe('exec', () => {
     it('Only modified files are detected', async function () {
-      
-      let date
-      let paths
+      this.timeout(10000); // Required for longer sleep handling.
       try {
-        await initialize()
-        date = new Date()
-        await Promise.all(CHANGED_FILE_PATHS.map(filePath => change(filePath)))
+        await initialize() // Setup
+        const date = new Date() // After setup BUT before change date
+        await sleep(100) // time issue bug.
+        await Promise.all(CHANGED_FILE_PATHS.map(filePath => change(filePath))) // Modify files
 
-        paths = await nrm.builder().path(path.resolve(THIS_DIR, 'files')).newerThan(date).exec()
+        const paths = await nrm.builder().path(path.resolve(THIS_DIR, 'files')).newerThan(date).exec()
+        console.log('date', date)
+        console.log('paths', paths)
+
+        // TESTS
+        chai.expect(paths).to.be.an('array') // Type check
+        chai.expect(paths.sort()).to.deep.equal(CHANGED_FILE_PATHS) // Only those that were modified.
+
       } catch (error) {
         console.error('async error', error)
         chai.assert.fail(0, 1, 'Async Error')
         return error
       }
-
-      console.log('paths', paths)
-      chai.expect(paths).to.be.an('array')
-      chai.expect(paths.sort()).to.deep.equal(CHANGED_FILE_PATHS)
     })
   })
 })
 
+/**
+ * Deletes directory and then populates with base files.
+ */
 async function initialize () {
   await fs.remove(path.resolve(THIS_DIR, 'files'))
   await fs.copy(path.resolve(THIS_DIR, 'base-files'), path.resolve(THIS_DIR, 'files'))
 }
 
+/**
+ * @param {string} filePath 
+ */
 async function change (filePath) {
   await fs.appendFile(filePath, '+')
+}
+
+/**
+ * @param {number} ms 
+ * @return {Promise<void>}
+ */
+function sleep(ms) {
+  return new Promise((resolve) => {
+    setTimeout(() => resolve(), ms)
+  })
 }
