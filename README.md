@@ -6,7 +6,7 @@ By default, gets only folders, but can set to get only files and both too.
 
 ## Usage
 
-```bash
+```js
 const nrm = ('node-recently-modified')
 nrm.builder().path('./').exclude(['node_modules']).files(true).directories(false).newerThan(Date.now()).logging(true).exec()
 .then(console.log)
