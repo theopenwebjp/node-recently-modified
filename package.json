@@ -1,5 +1,5 @@
 {
-  "name": "node-recently-modified",
+  "name": "@theopenweb/node-recently-modified",
   "version": "1.0.0",
   "description": "Simple Node js library for getting recently modified files.\r Main goal is for having a way of getting modified files that need to be back-upped.\r By default, gets only folders, but can set to get only files and both too.",
   "main": "index.js",
@@ -7,7 +7,19 @@
     "test": "mocha ./test/*.js"
   },
   "keywords": ["modified", "fsstat", "recently modified", "node.js", "timestamp", "date"],
-  "author": "Damien Golding",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/theopenwebjp/node-recently-modified.git"
+  },
+  "author": "The Open Web <noreply@theopenweb.jp> (https://theopenweb.jp)",
+  "contributors": [
+    "Damien Golding <noreply@damiengolding.com> (https://damiengolding.com)"
+  ],
+  "homepage": "https://theopenweb.info",
+  "bugs": {
+    "url": "https://github.com/theopenwebjp/node-recently-modified/issues"
+  },
+  "private": false,
   "license": "MIT",
   "dependencies": {
     "fs-extra": "^7.0.1",
